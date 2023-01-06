@@ -1,11 +1,19 @@
 import './bootstrap';
-import { createApp } from 'vue';
+import 'vuetify/dist/vuetify.min.css'
+import vuetify from './vuetify';
+import router from './router';
+import pinia from './pinia';
+import {createApp} from 'vue';
+import axios from 'axios';
 
 
 const app = createApp({});
 
-import ExampleComponent from './components/ExampleComponent.vue';
-app.component('example-component', ExampleComponent);
+app.use(vuetify);
+app.use(router);
+app.use(pinia);
+
+app.config.globalProperties.$http = axios;
 
 /**
  * The following block of code may be used to automatically register your
@@ -14,9 +22,8 @@ app.component('example-component', ExampleComponent);
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-
-// Object.entries(import.meta.glob('./**/*.vue', { eager: true })).forEach(([path, definition]) => {
-//     app.component(path.split('/').pop().replace(/\.\w+$/, ''), definition.default);
-// });
+Object.entries(import.meta.glob('./components/global/*.vue', { eager: true })).forEach(([path, definition]) => {
+    app.component(path.split('/').pop().replace(/\.\w+$/, ''), definition.default);
+});
 
 app.mount('#app');

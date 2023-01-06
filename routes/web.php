@@ -1,6 +1,13 @@
 <?php
 
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SinglePageController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -12,11 +19,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [SinglePageController::class, 'defaultRedirect']);
+Route::get('/home', [SinglePageController::class, 'defaultRedirect']);
+
+Route::get('/{locale}', [SinglePageController::class, 'index'])
+    ->where('any', '.*');
