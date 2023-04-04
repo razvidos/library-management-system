@@ -13,6 +13,18 @@ class Book extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'title',
+        'author_id',
+        'ISBN',
+        'publish_date'
+    ];
+
+    /**
      * @return BelongsTo
      */
     public function author(): BelongsTo

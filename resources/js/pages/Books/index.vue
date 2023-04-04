@@ -1,5 +1,6 @@
 <template>
     <v-container>
+        <router-link :to="{ name: 'books.create' }" class="btn btn-primary">Add Book</router-link>
         <v-row v-if="isLoading" align="center" class="fill-height ma-0" justify="center">
             <v-progress-circular class="mx-auto" indeterminate size="100"></v-progress-circular>
         </v-row>

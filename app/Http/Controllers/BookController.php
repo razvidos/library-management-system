@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookStoreRequest;
+use App\Http\Requests\BookUpdateRequest;
 use App\Models\Book;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
-class BookController extends Controller
+class BookController extends Controller //todo: middleware
 {
     /**
      * Display a listing of the resource.
@@ -37,68 +38,65 @@ class BookController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return Response
+     * @param BookStoreRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(BookStoreRequest $request): JsonResponse
     {
-        //
+        $validated = $request->validated();
+        $book = new Book($validated);
+        $book->save();
+
+        $book->genres()->attach($validated['genre_ids']);
+
+        return response()->json($book, 201);
     }
 
     /**
      * Display the specified resource.
      *
      * @param Book $book
-     * @return Response
+     * @return JsonResponse
      */
-    public function show(Book $book)
+    public function show(Book $book): JsonResponse
     {
-        //
-    }
+        $book->load('author', 'genres');
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param Book $book
-     * @return Response
-     */
-    public function edit(Book $book)
-    {
-        //
+        return response()->json($book);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param BookUpdateRequest $request
      * @param Book $book
-     * @return Response
+     * @return JsonResponse
      */
-    public function update(Request $request, Book $book)
+    public function update(BookUpdateRequest $request, Book $book): JsonResponse
     {
-        //
+        $validated = $request->validated();
+
+        $book->update($validated);
+        $book->genres()->sync($validated['genre_ids']);
+
+
+        return response()->json($book);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param Book $book
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy(Book $book)
+    public function destroy(Book $book): JsonResponse
     {
-        //
+        $book->delete();
+
+        return response()->json([
+            'message' => 'The book has been deleted.'
+        ]);
     }
 }
