@@ -40,7 +40,7 @@ export default {
         },
         editBook() {
             const id = this.$route.params.id;
-            this.$router.push({name: 'book.edit', params: {id: id}});
+            this.$router.push({name: 'books.edit', params: {id: id}});
         },
         deleteBook() {
             const id = this.$route.params.id;

@@ -23,8 +23,21 @@ class BookController extends Controller //todo: middleware
         $page = $request->input('page', 1);
 
         // Get a collection of books, paginated with the given parameters
-        $books = Book::with('author', 'genres')
-            ->orderBy('created_at', 'desc')
+        $booksQuery = Book::with('author', 'genres');
+
+        // Search
+        $search = $request->input('searchTerm');
+        if ('' != $search) {
+            $booksQuery->where('title', 'like', "%$search%")
+                ->orWhereHas('author', function ($query) use ($search) {
+                    $query->whereRaw('concat(first_name, " ", last_name) like ?', ["%$search%"]);
+                })
+                ->orWhereHas('genres', function ($query) use ($search) {
+                    $query->where('name', 'like', "%$search%");
+                });
+        }
+
+        $books = $booksQuery->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
 
         // Return the books as a JSON response
