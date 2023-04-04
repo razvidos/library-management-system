@@ -6,8 +6,8 @@
 
 <script setup>
 const routes = [
-    { name: 'Home', to: {name: 'home'} },
-    { name: 'Profile', to: {name: 'profile'} },
+    {name: 'Home', to: {name: 'home'}},
+    {name: 'Books', to: {name: 'books'}},
 ];
 
 </script>

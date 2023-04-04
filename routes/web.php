@@ -1,12 +1,8 @@
 <?php
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\App;
+use App\Http\Controllers\SinglePageController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SinglePageController;
 
 
 /*
@@ -21,8 +17,4 @@ use App\Http\Controllers\SinglePageController;
 */
 Auth::routes();
 
-Route::get('/', [SinglePageController::class, 'defaultRedirect']);
-Route::get('/home', [SinglePageController::class, 'defaultRedirect']);
-
-Route::get('/{locale}', [SinglePageController::class, 'index'])
-    ->where('any', '.*');
+Route::get('/{any}', [SinglePageController::class, 'index'])->where('any', '.*');
