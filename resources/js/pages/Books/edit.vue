@@ -1,15 +1,28 @@
 <template>
     <v-container>
         <v-form @submit.prevent="updateBook">
-            <v-text-field v-model="book.title" label="Title" required/>
-            <v-text-field v-model="book.ISBN" label="ISBN" required/>
-            <v-text-field v-model="book.publish_date" label="Publish Date" required/>
+            <v-text-field
+                v-model="book.title"
+                :error-messages="getErrorMessages('title')"
+                label="Title"
+                required/>
+            <v-text-field
+                v-model="book.ISBN"
+                :error-messages="getErrorMessages('ISBN')"
+                label="ISBN"
+                required/>
+            <v-text-field
+                v-model="book.publish_date"
+                :error-messages="getErrorMessages('publish_date')"
+                label="Publish Date"
+                required/>
             <v-select
                 v-model="book.author_id"
                 :items="authors"
                 item-title="first_name"
                 item-value="id"
                 label="Author"
+                :error-messages="getErrorMessages('author_id')"
                 required/>
             <v-select
                 v-model="selectedGenres"
@@ -18,7 +31,9 @@
                 item-title="name"
                 item-value="id"
                 label="Genres"
+                :error-messages="getErrorMessages('genre_ids')"
                 multiple/>
+
             <v-btn :disabled="loading" type="submit">Update</v-btn>
             <v-btn :disabled="loading" @click="deleteBook">Delete</v-btn>
             <v-progress-circular v-if="loading" indeterminate size="64"/>
@@ -52,7 +67,7 @@ export default {
             this.$http.get('/api/genres')
         ])
 
-        this.authors = response.data.map(author => ({
+        this.authors = authorsResponse.data.map(author => ({
             ...author,
             full_name: `${author.first_name} ${author.last_name}`
         }))
@@ -79,7 +94,11 @@ export default {
 
                 this.$router.push({name: 'books'})
             } catch (error) {
-                console.error(error)
+                if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                } else {
+                    console.error(error);
+                }
             }
 
             this.loading = false
@@ -92,12 +111,22 @@ export default {
                     await this.$http.delete(`/api/books/${this.book.id}`)
                     this.$router.push({name: 'books'})
                 } catch (error) {
-                    console.error(error)
+                    if (error.response && error.response.status === 422) {
+                        this.errors = error.response.data.errors;
+                    } else {
+                        console.error(error);
+                    }
                 }
             }
 
             this.loading = false
-        }
+        },
+        getErrorMessages(field) {
+            if (this.errors && this.errors[field]) {
+                return this.errors[field];
+            }
+            return [];
+        },
     }
 }
 </script>

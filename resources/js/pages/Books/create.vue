@@ -1,9 +1,21 @@
 <template>
     <v-container>
         <v-form ref="form" v-model="valid">
-            <v-text-field v-model="title" label="Title" required/>
-            <v-text-field v-model="ISBN" label="ISBN" required/>
-            <v-text-field v-model="publish_date" label="Publish Date" required/>
+            <v-text-field
+                v-model="title"
+                :error-messages="getErrorMessages('title')"
+                label="Title"
+                required/>
+            <v-text-field
+                v-model="ISBN"
+                :error-messages="getErrorMessages('ISBN')"
+                label="ISBN"
+                required/>
+            <v-text-field
+                v-model="publish_date"
+                :error-messages="getErrorMessages('publish_date')"
+                label="Publish Date"
+                required/>
 
             <v-select
                 v-model="selectedAuthor"
@@ -11,7 +23,9 @@
                 item-title="full_name"
                 item-value="id"
                 label="Author"
+                :error-messages="getErrorMessages('author_id')"
                 required/>
+
             <v-select
                 v-model="selectedGenre"
                 :items="genres"
@@ -20,8 +34,9 @@
                 item-value="id"
                 label="Genre"
                 multiple
+                :error-messages="getErrorMessages('genre_ids')"
                 required/>
-            <v-btn :disabled="!valid" @click="submit">Create Book</v-btn>
+            <v-btn @click="submit">Create Book</v-btn>
         </v-form>
     </v-container>
 </template>
@@ -38,6 +53,7 @@ export default {
             selectedGenre: null,
             authors: [],
             genres: [],
+            errors: {},
         };
     },
     created() {
@@ -64,8 +80,22 @@ export default {
                 author_id: this.selectedAuthor,
                 genre_ids: this.selectedGenre,
             };
-            const response = await this.$http.post('/api/books', payload);
-            this.$router.push({name: 'books.show', params: {id: response.data.id}});
+            try {
+                const response = await this.$http.post('/api/books', payload);
+                this.$router.push({name: 'books.show', params: {id: response.data.id}});
+            } catch (error) {
+                if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                } else {
+                    console.error(error);
+                }
+            }
+        },
+        getErrorMessages(field) {
+            if (this.errors && this.errors[field]) {
+                return this.errors[field];
+            }
+            return [];
         },
     },
 };
