@@ -19,5 +19,12 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345678'),
             'email' => 'admin@gmail.com'
         ]);
+
+        $this->call([
+//            AuthorSeeder::class,
+//            GenreSeeder::class,
+            BookSeeder::class,
+//            BookGenreSeeder::class,
+        ]);
     }
 }
