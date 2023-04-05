@@ -28,4 +28,9 @@ class BookPolicy
     {
         return $user !== null;
     }
+
+    public function delete(User $user): bool
+    {
+        return $user !== null;
+    }
 }

@@ -29,5 +29,6 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('store-book', [BookPolicy::class, 'store']);
         Gate::define('update-book', [BookPolicy::class, 'update']);
+        Gate::define('delete-book', [BookPolicy::class, 'delete']);
     }
 }

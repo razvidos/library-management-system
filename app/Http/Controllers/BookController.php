@@ -7,6 +7,7 @@ use App\Http\Requests\BookUpdateRequest;
 use App\Models\Book;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class BookController extends Controller //todo: middleware
 {
@@ -106,6 +107,10 @@ class BookController extends Controller //todo: middleware
      */
     public function destroy(Book $book): JsonResponse
     {
+        if (Gate::denies('delete-book')) {
+            abort(403);
+        }
+
         $book->delete();
 
         return response()->json([
