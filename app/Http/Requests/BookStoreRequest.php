@@ -14,7 +14,6 @@ class BookStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // todo: realize Vue Authorization
         return Gate::allows('store-book');
     }
 

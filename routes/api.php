@@ -22,10 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::group(['middleware' => 'auth:sanctum'], static function () {  // todo: placed when auth will realize in Vue
 Route::group(['middleware' => 'api'], static function () {
     Route::resource('books', BookController::class);
     Route::resource('authors', AuthorController::class)->only(['index']);
     Route::resource('genres', GenreController::class)->only(['index']);
 });
-//});
